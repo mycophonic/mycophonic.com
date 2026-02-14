@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enoki, For the Love of Music</title>
+    <meta name="description" content="A music player and library manager built for these who deeply love music.">
+    <link rel="canonical" href="https://mycophonic.org/">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mycophonic.org/">
+    <meta property="og:title" content="Enoki, For the Love of Music">
+    <meta property="og:description" content="A music player and library manager built for these who deeply love music.">
+    <meta property="og:image" content="https://mycophonic.org/logo.jpg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Enoki, For the Love of Music">
+    <meta name="twitter:description" content="A music player and library manager built for these who deeply love music.">
+    <meta name="twitter:image" content="https://mycophonic.org/logo.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0a0c10;
+            --bg-surface: #111318;
+            --cream: #e8e4dc;
+            --cream-dim: #e8e4dc99;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 18px;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--cream);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.025;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 4.5rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.2s forwards;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 2.6rem;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.4s forwards;
+        }
+
+        h1 em {
+            font-style: italic;
+        }
+
+        h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-top: 3.5rem;
+            margin-bottom: 1.25rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.8s forwards;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.6s forwards;
+        }
+
+        .specs {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-top: 2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .specs-quiet {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+
+        /* Form section */
+        .form-section {
+            margin-top: 2.5rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 1s forwards;
+        }
+
+        .form-container {
+            background: var(--bg-surface);
+            border: 1px solid rgba(232, 228, 220, 0.06);
+            border-radius: 6px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        input[type="email"] {
+            flex: 1;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg);
+            border: 1px solid rgba(232, 228, 220, 0.1);
+            border-radius: 4px;
+            color: var(--cream);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="email"]::placeholder {
+            color: var(--cream-dim);
+        }
+
+        input[type="email"]:focus {
+            border-color: rgba(232, 228, 220, 0.3);
+        }
+
+        button[type="submit"] {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            background: var(--cream);
+            color: var(--bg);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            opacity: 0.85;
+        }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 1.25rem;
+            font-size: 0.85rem;
+            color: var(--cream-dim);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Thank you state */
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .thank-you h3 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .thank-you p {
+            opacity: 1;
+            animation: none;
+            margin-bottom: 0;
+            color: var(--cream-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            html {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 3rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .logo {
+                width: 140px;
+                height: 140px;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="logo-container">
+            <img src="logo.jpg" alt="Enoki" class="logo">
+        </div>
+
+        <h1>Audiophile software has stalled.<br/> <em>We're fixing that.</em></h1>
+
+        <p>Hardware keeps getting better. Software hasn't kept up. The way we interact with music players was designed in the early 2000s, and nobody's seriously questioned it since.</p>
+
+        <p>We're building Enoki, a music player and library manager with one goal: be the best there is.</p>
+
+        <p class="specs">Bit-perfect playback, classical metadata, multi-room.</p>
+        <p class="specs-quiet">No compromise.</p>
+
+        <p>But we're not building it in a vacuum.</p>
+
+        <h2>We need to talk to you.</h2>
+
+        <p>Not a survey. Not a form. A real conversation (30 minutes) about how you actually listen to music, what software you use, and what drives you nuts about it.</p>
+
+        <p>If you own a DAC and have opinions about how music gets to it, you're exactly who we're looking for.</p>
+
+        <div class="form-section">
+            <div class="form-container">
+                <form id="contact-form" action="https://formspree.io/f/xpqjakno" method="POST">
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Your email" 
+                        required
+                        autocomplete="email"
+                    >
+                    <button type="submit">Send</button>
+                </form>
+                <div class="thank-you" id="thank-you">
+                    <h3>Got it.</h3>
+                    <p>We'll be in touch to schedule a chat.</p>
+                </div>
+            </div>
+            <p class="footer-note">We'll reach out to schedule a chat. Nothing else. No spam, no newsletter, no marketing.</p>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('contact-form');
+        const thankYou = document.getElementById('thank-you');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    form.style.display = 'none';
+                    thankYou.style.display = 'block';
+                } else {
+                    alert('Something went wrong. Please try again.');
+                }
+            } catch (error) {
+                alert('Something went wrong. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
